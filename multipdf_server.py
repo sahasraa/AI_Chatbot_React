@@ -130,7 +130,7 @@ def query_rag(query_text: str):
 
     if best_match:
         return {
-            "response": """<h3>🚀 Unique AI & IoT-Based Solutions at Brihaspathi Technologies Limited</h3>
+            "response": """<b>🚀 Unique AI & IoT-Based Solutions at Brihaspathi Technologies Limited</b>
             <p>We offer **custom-built AI and IoT-driven solutions** beyond traditional hardware, tailored for various industries:</p>
             <ul>
                 <li>🤖 <b>AI-Based Solutions:</b> VMS (Video Management Systems), Intelligent Chatbots, AI based Visitot management system/ Access Control System</li>
@@ -152,16 +152,16 @@ def query_rag(query_text: str):
 
     if any(q in normalized_query for q in branch_queries):
         return {
-            "response": """<h3>🏢 Brihaspathi Technologies Limited - Branches & Service Centers</h3>
+            "response": """<b>🏢 Brihaspathi Technologies Limited - Branches & Service Centers</b>
             <p>We have multiple branches and service centers across **India** to serve our customers efficiently.</p>
 
-            <h4>📍 **Corporate & Registered Offices**</h4>
+            <b>📍 **Corporate & Registered Offices**</b>
             <b>✔️ Registered Address:</b>  
             7-1-621/259, 5th Floor, Sahithi Arcade, SR Nagar, Hyderabad – 500038.<br>
             <b>✔️ Corporate Address:</b>  
             #501, #508-510, Shangrila Plaza, Road No. 2, Park View Enclave, Banjara Hills, Hyderabad, Telangana – 500034.<br><br>
 
-            <h4>🌍 **Branch Offices & Service Centers**</h4>
+            <b>🌍 **Branch Offices & Service Centers**</b>
             <ul>
                 <li>📌 <b>Kurnool:</b> H.No. 45/204-A1-3, Near KNR High School, Venkatramana Colony Road, Mamatha Cafe, Ashok Nagar, Kurnool, Andhra Pradesh – 518001.</li>
                 <li>📌 <b>Vijayawada:</b> Durga Enclave, Flat No A1, 1st Floor, ex C M Road, Old toll gate, behind HP Petrol Bunk, Tadepalle, Kunchanapalli, Andhra Pradesh 522501.</li>
@@ -185,16 +185,16 @@ def query_rag(query_text: str):
 
     predefined_responses = {
     "careers": """
-        <h3>🔹 Careers at Brihaspathi Technologies Limited</h3>
+        <b>🔹 Careers at Brihaspathi Technologies Limited</b>
         <p>For career opportunities, please visit our official careers page or contact our HR department:</p>
         <p>📧 <a href='mailto:HR@Brihaspathi.com'>HR@Brihaspathi.com</a></p>
     """,
 
     "products": """
-        <h3>🛠 Our Products & Services at Brihaspathi Technologies Limited</h3>
+        <b>🛠 Our Products & Services at Brihaspathi Technologies Limited</b>
         <p>We offer a wide range of <b>security solutions</b>, including:</p>
 
-        <h4>🔹 Security & Surveillance Solutions:</h4>
+        <b>🔹 Security & Surveillance Solutions:</b>
         <ul>
             <li>📷 CCTV Surveillance</li>
             <li>🛂 Biometric Time & Attendance / Access Control</li>
@@ -207,7 +207,7 @@ def query_rag(query_text: str):
             <li>🚨 Burglar Alarm System</li>
         </ul>
 
-        <h4>🔹 Additional Technological Services:</h4>
+        <b>🔹 Additional Technological Services:</b>
         <ul>
             <li>🔐 E-Security Solutions</li>
             <li>📱 App Development</li>
@@ -224,7 +224,7 @@ def query_rag(query_text: str):
     """,
 
     "about us": """
-        <h3>🏢 About Brihaspathi Technologies Limited</h3>
+        <b>🏢 About Brihaspathi Technologies Limited</b>
         <p><b>🚀 A Solutions-Driven Company for Custom E-Security & IT Innovations</b></p>
         <p>Brihaspathi Technologies Limited is a trusted leader in IT products and solutions since 2006, headquartered in Hyderabad.</p>
         <p>We specialize in custom e-security solutions, tailoring cutting-edge technologies to meet the unique needs of businesses and institutions worldwide.</p>
@@ -233,7 +233,7 @@ def query_rag(query_text: str):
     """,
 
     "hierarchy": """
-        <h3>👥 Company Hierarchy at Brihaspathi Technologies Limited</h3>
+        <b> Company Hierarchy at Brihaspathi Technologies Limited</b>
         <p>Our company operates with the following leadership structure:</p>
 
         <ul>
