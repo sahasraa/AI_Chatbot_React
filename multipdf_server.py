@@ -279,7 +279,7 @@ def query_rag(query_text: str):
     ]
     detected_quotation_request = any(phrase in normalized_query for phrase in quotation_phrases)
 
-    product_keywords = ["cctv", "solar", "home automation", "sales", "price", "quotation", "cost", "quote", "pricing", "estimate"]
+    product_keywords = ["cctv", "solar", "home automation", "sales", "price", "quotation", "cost", "quote", "pricing", "estimate", "cctvs"]
     product_request = any(p in normalized_query for p in product_keywords)
 
     if detected_quotation_request:
@@ -308,6 +308,7 @@ def query_rag(query_text: str):
     {context_text}
 
     Answer the question based **strictly** on the context above.
+    - If the user greets (hi, hello, hey), respond with the same greeting warmly and follow up with “How can I assist you today?”; if the user says thank you, reply with “You're welcome! Is there anything else I can help you with?” to keep the conversation flowing.
     - If you don't find an answer, **say Sorry and you don't have enough information** instead of guessing.
     - If the user is asking for quotations, redirect them to the quotation form.
     - Avoid generic definitions or answering beyond the provided data.
@@ -377,15 +378,10 @@ async def get_chat_history():
 
 @app.post("/chat")
 async def chat(query: UserQuery):
-    """ Handles user queries and ensures the bot greets first-time users. """
+    if query.message.strip().lower() == "start":
+        return {"response": "Hi, I am Briha 🤖, how may I help you?"}
 
-    # Check if this is the user's first message
     chat_history = query_rag(query.message)
-
-    # If there are no prior messages in the chat history, return the greeting
-    if not chat_history.get("response"):
-        return {"response": "Hi, I am Briha 🤖,  how can I help you?"}
-
     return chat_history
 
 @app.post("/submit_form")
