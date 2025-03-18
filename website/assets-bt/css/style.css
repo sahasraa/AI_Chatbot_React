@@ -1003,27 +1003,16 @@ a:hover, a:active {
 
 .chatbot-container {
   position: fixed;
-  /* height: 80vh; */
-  bottom:50px;
+  bottom:150px;
   right: 50px;
   z-index: 10;
   width: 350px;
   background: white;
   border-radius: 10px;
-  /* box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); */
-  /* overflow: hidden; */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
   display: none; 
   flex-direction: column; 
-  opacity: 0;
-  transform: scale(0.8);
-  transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  padding-bottom: -100px;
-
-}
-
-#user-input::placeholder{
-  color: black;
 }
 
 .chat-header {
@@ -1044,22 +1033,9 @@ a:hover, a:active {
   padding: 0 10px;
   color: #fefcfc;
 }
-.contactheader{
-  color: black;
-}
-
-#fullName::placeholder{
-  color: black;
-}
-#email::placeholder{
-  color: black;
-}
-#phone::placeholder{
-  color: black;
-}
 
 /* Chat Messages */
-/* .chat-messages {
+.chat-messages {
   height: 350px;
   overflow-y: auto;
   padding: 10px;
@@ -1085,10 +1061,10 @@ a:hover, a:active {
 .bot-message {
   background: #f1f1f1;
   color: black;
-} */
+}
 
 /* Chat Input */
-/* .chat-input {
+.chat-input {
   display: flex;
   padding: 10px;
   border-top: 1px solid #ddd;
@@ -1115,10 +1091,10 @@ a:hover, a:active {
 
 .chat-input button:hover {
   background: #0056b3;
-} */
+}
 
 /* Quotation Form */
-/* .form-message {
+.form-message {
   background: #4982d8;
   padding: 10px;
   border-radius: 5px;
@@ -1134,6 +1110,19 @@ a:hover, a:active {
   border-radius: 5px;
   border: 1px solid #ddd;
 }
+#formheadercontact{
+  color: white
+}
+#fullName::placeholder{
+  color: black;
+}
+#email::placeholder{
+  color: black;
+}
+
+#phone::placeholder{
+  color: black;
+}
 
 .form-message button {
   background: green;
@@ -1143,9 +1132,9 @@ a:hover, a:active {
 
 .form-message button:hover {
   background: darkgreen;
-} */
+}
 
-/* .loader {
+.loader {
   width: 40px;
   aspect-ratio: 2;
   --_g: no-repeat radial-gradient(circle closest-side,#000 90%,#0000);
@@ -1155,7 +1144,7 @@ a:hover, a:active {
     var(--_g) 100% 50%;
   background-size: calc(100%/3) 50%;
   animation: l3 1s infinite linear;
-} */
+}
 @keyframes l3 {
     20%{background-position:0%   0%, 50%  50%,100%  50%}
     40%{background-position:0% 100%, 50%   0%,100%  50%}
