@@ -4,4 +4,9 @@ chromadb
 pytest
 boto3
 langchain_community
+langchain_chroma
+pymongo
+streamlit
+sentence_transformers
+python-multipart
 
