@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lead Capture Form</title>
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --background-color: #ecf0f1;
+            --text-color: #2c3e50;
+            --input-background: #ffffff;
+            --success-color: #27ae60;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        .container {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            
+        }
+
+        .form-container {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 600px;
+            
+        }
+
+        .logo-container {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding: 1rem;
+        }
+
+        .logo {
+            max-width: 100%;
+            height: auto;
+            width: 300px;
+            object-fit: contain;
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--primary-color);
+            margin-bottom: 2rem;
+            font-size: 2rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+            position: relative;
+            
+        }
+
+        /* .form-group label {
+            position: absolute;
+            left: 0.8rem;
+            top: 1rem;
+            transform: translateY(0);
+            color: #666;
+            font-size: 1rem;
+            transition: all 0.2s ease-out;
+            background: white;
+            padding: 0 0.4rem;
+            pointer-events: none;
+            z-index: 1;
+        } */
+
+        input,
+        select {
+            width: 100%;
+            padding: 1rem 0.8rem;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            background-color: var(--input-background);
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        input:focus,
+        select:focus {
+            outline: none;
+            border-color: var(--secondary-color);
+            box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.1);
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 1rem;
+            background-color: var(--secondary-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .submit-btn:hover {
+            background-color: #2980b9;
+        }
+
+
+     
+        
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="form-container">
+            <div class="logo-container">
+                <img src="https://assets.bizgaze.com/_files/documents/1619/549f254a-ae23-4335-b7d1-a37b6c33fea9/New Logo BTL.jpg" 
+                     alt="Brihaspathi - The Guru of Tomorrow's Technology" class="logo">
+            </div>
+            <h1>Lead Information</h1>
+            <form id="leadForm">
+                <div class="form-group">
+                    <label for="fullName">Your Name</label>
+                    <input type="text" id="fullName" name="fullName" placeholder=" Ful Name" required>
+                  
+                </div>
+                
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email" name="email" placeholder=" Email Address" required>
+                  
+                </div>
+                
+                <div class="form-group">
+                    <label for="phone">Mobile Number</label>
+                    <input type="tel" id="phone" name="phone" minlength="10" maxlength="10" placeholder=" Number" value="" required>
+                 
+                </div>
+
+                <div class="form-group">
+                  <div class="select">   <label for="interest">Interest</label>
+                    <select id="interest" name="interest" required  >
+                        <option value="" disabled selected>Select the options below</option>
+                        <option value="CCTV/Camera">CCTV/Camera</option>
+                        <option value="Software">Software</option>
+                        <option value="Computer/Laptop">Computer/Laptop</option>
+                        <option value="All" >All</option>
+                    </select></div>
+                 
+                </div>
+                
+                <button type="submit" class="submit-btn">Submit Lead</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('leadForm');
+            const phoneInput = document.getElementById('phone');
+            const API_TOKEN = '27f4d43e52654efe8cd3257c36865ac7';
+            const API_URL = 'https://app.bizgaze.com/apis/v4/bizgaze/integrations/leads/create';
+
+            // Phone number validation
+            phoneInput.addEventListener('input', function(e) {
+                let x = e.target.value.replace(/\D/g, ''); // Only allow numbers
+            });
+
+            // Form submission
+            form.addEventListener('submit', async function(e) {
+                e.preventDefault();
+
+                const formData = {
+                    ContactName: document.getElementById('fullName').value,
+                    Email: document.getElementById('email').value,
+                    Phone: document.getElementById('phone').value.replace(/\D/g, ''), // Remove non-digits
+                    Interest: document.getElementById('interest').value,
+                    LeadSource: "Website"
+                };
+
+                try {
+                    const response = await fetch(API_URL, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${API_TOKEN}`
+                        },
+                        body: JSON.stringify(formData)
+                    });
+
+                    console.log(response)
+
+                    if (!response.ok) {
+                        throw new Error('Failed to submit lead');
+                    }
+
+                    alert("Lead submitted successfully!");
+                    form.reset();
+                } catch (error) {
+                    alert("Error: " + error.message);
+                }
+            });
+        });
+    </script>
+</body>
+</html>
