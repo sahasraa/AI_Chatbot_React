@@ -110,26 +110,21 @@ class ChatHistory(BaseModel):
     chatHistory: List[ChatMessage]  
     lastMessageTime: str  
 
+
+
 def query_rag(query_text: str):
-    """Processes user queries and returns appropriate responses."""
+    """Processes user queries and returns appropriate responses by prioritizing vector search first, 
+    then falling back to grouped query handles via a loop structure (including fuzzy matching), and finally showing a fallback message."""
 
-    normalized_query = query_text.lower().strip()
+    normalized_query = query_text.lower().strip().replace("?", "")
 
-    # ✅ **Explicit Handling for MD-related Queries**
-    md_queries = ["md", "who is md", "who is the md", "managing director"]
-    if any(q in normalized_query for q in md_queries):
-        return {"response": "<b>Mr. Rajasekhar Papolu</b> is the Managing Director of Brihaspathi Technologies Limited.", "show_form": False}
-
-    unique_solutions_queries = [
-        "unique solutions", "different solutions", "non-hardware solutions",
-        "ai solutions", "iot solutions", "custom solutions", 
-        "software solutions", "any unique solutions", "special solutions", "AI IOT solutions"
-    ]
-    
-    best_match = difflib.get_close_matches(normalized_query, unique_solutions_queries, n=1, cutoff=0.8)
-
-    if best_match:
-        return {
+    query_groups = [
+        {
+            "patterns": ["md", "who is md", "who is the md", "managing director"],
+            "response": "<b>Mr. Rajasekhar Papolu</b> is the Managing Director of Brihaspathi Technologies Limited."
+        },
+        {
+            "patterns": ["unique solutions", "different solutions", "non-hardware solutions", "ai solutions", "iot solutions", "custom solutions", "software solutions", "any unique solutions", "special solutions", "ai iot solutions"],
             "response": """<b>🚀 Unique AI & IoT-Based Solutions at Brihaspathi Technologies Limited</b>
             <p>We offer **custom-built AI and IoT-driven solutions** beyond traditional hardware, tailored for various industries:</p>
             <ul>
@@ -141,17 +136,10 @@ def query_rag(query_text: str):
             </ul>
             <p>Our focus is on <b>AI & IoT innovation</b> to create intelligent, scalable, and automation-driven solutions.</p>
             <p>For more details, reach out at 📧 <a href='mailto:info@brihaspathi.com'>info@brihaspathi.com</a></p>""",
-            "show_form": False
-        }
-
-    # ✅ **Handling Branch & Service Center Queries**
-    branch_queries = [
-        "how many branches", "branch locations", "where are your branches",
-        "service centers", "office locations", "company units", "where are you located"
-    ]
-
-    if any(q in normalized_query for q in branch_queries):
-        return {
+            "use_fuzzy": True  # added indicator to use difflib for fuzzy matching
+        },
+        {
+            "patterns": ["how many branches", "branch locations", "where are your branches", "service centers", "office locations", "company units", "where are you located"],
             "response": """<b>🏢 Brihaspathi Technologies Limited - Branches & Service Centers</b>
             <p>We have multiple branches and service centers across **India** to serve our customers efficiently.</p>
 
@@ -178,10 +166,18 @@ def query_rag(query_text: str):
 
             <p>📞 For support & service inquiries, please contact us at:  
             ☎️ <b>+91 9676021111, +91 9676031111</b> or  
-            📧 <a href='mailto:support@brihaspathi.com'>support@brihaspathi.com</a></p>""",
-            "show_form": False
+            📧 <a href='mailto:support@brihaspathi.com'>support@brihaspathi.com</a></p>"""
         }
+    ]
 
+    for group in query_groups:
+        if group.get("use_fuzzy"):
+            best_match = difflib.get_close_matches(normalized_query, group["patterns"], n=1, cutoff=0.8)
+            if best_match:
+                return {"response": group["response"], "show_form": False}
+        else:
+            if any(pattern in normalized_query for pattern in group["patterns"]):
+                return {"response": group["response"], "show_form": False}
 
     predefined_responses = {
     "careers": """
@@ -232,7 +228,7 @@ def query_rag(query_text: str):
         <p>☎️ Contact us: <b>+91 9676021111, +91 9676031111</b></p>
     """,
 
-    "hierarchy": """
+    "positions": """
         <b> Company Hierarchy at Brihaspathi Technologies Limited</b>
         <p>Our company operates with the following leadership structure:</p>
 
@@ -248,69 +244,43 @@ def query_rag(query_text: str):
 
         <p>For official inquiries, please contact:</p>
         <p>📧 <a href='mailto:info@brihaspathi.com'>info@brihaspathi.com</a></p>
-    """
-}
+    """}  # Add all predefined long-form HTML responses here.
 
-
-    # ✅ **Check for Hardcoded Responses**
     if normalized_query in predefined_responses:
         return {"response": predefined_responses[normalized_query], "show_form": False}
 
-    # ✅ **Identity-Based Questions Handling**
-    identity_questions = [
-        "who are you", "what is your name", "introduce yourself", "tell me about yourself", "who am I chatting with", "who r u"
-    ]
-    best_match = difflib.get_close_matches(normalized_query, identity_questions, n=1, cutoff=0.8)
+    quotation_phrases = ["i need a quotation", "can you give me a quote?", "how much does it cost?", "what is the price?", "can i get an estimate?", "quotation please","price","cctv", "solar", "home automation", "sales","quotation", "cost", "quote", "pricing", "estimate", "Quotation", "Quote"]
+    if any(phrase in normalized_query for phrase in quotation_phrases):
+        return {"response": "Please fill in the form below to get a quotation or click on contact us above.", "show_form": True}
+            
 
-    if best_match:
-        return {
-            "response": (
-                "I am a Support Executive at Brihaspathi Technologies Limited. "
-                "You can reach me at 9676021111, 9676031111, or support@brihaspathi.com. "
-                "For technical assistance, please call our Toll-Free number 1800 296 8899."
-            ),
-            "show_form": False
-        }
+    # ✅ 1️⃣ Handle simple greetings and conversational queries first
+    if normalized_query in ["hi", "hello", "hey"]:
+        return {"response": f"{query_text.capitalize()}! How can I assist you today?", "show_form": False}
 
-    # ✅ **Refined Keyword Matching for Quotations**
-    quotation_phrases = [
-        "I need a quotation", "Can you give me a quote?", "How much does it cost?", 
-        "What is the price?", "Can I get an estimate?", "Quotation please"
-    ]
-    detected_quotation_request = any(phrase in normalized_query for phrase in quotation_phrases)
+    if any(p in normalized_query for p in ["who are you", "what is your name", "who r u", "introduce yourself", "who am i chatting with"]):
+        return {"response": "I am a Support Executive at Brihaspathi Technologies Limited. You can reach me at 9676021111, 9676031111, or support@brihaspathi.com. For technical assistance, please call our Toll-Free number 1800 296 8899.", "show_form": False}
 
-    product_keywords = ["cctv", "solar", "home automation", "sales", "price", "quotation", "cost", "quote", "pricing", "estimate", "cctvs"]
-    product_request = any(p in normalized_query for p in product_keywords)
+     
 
-    if detected_quotation_request:
-        return {
-            "response": "Please fill in the form below to get a quotation.",
-            "show_form": True
-        }
+    # ✅ 1️⃣ Perform vector search first
+    results = chroma_client.similarity_search_with_score(query_text, k=10)
+    high_confidence_results = [r for r in results if r[1] > 0.7]
 
-    # ✅ **Use Vector Search for General Queries (Handles Multiple PDFs)**
-    results = chroma_client.similarity_search_with_score(query_text, k=5)
+    if high_confidence_results:
+        context_text = "\n".join([doc.page_content for doc, _ in high_confidence_results])
 
-    if not results:
-        return {
-            "response": "Sorry, I don’t have enough information to answer that. Please contact us directly for further assistance at 9676021111, 9676031111, or support@brihaspathi.com.",
-            "show_form": False
-        }
+        prompt = f"""
+        You are a business assistant chatbot for Brihaspathi Technologies Limited. Answer strictly using the context below.
 
-    # Retrieve text from multiple PDFs
-    context_text = "\n".join([doc.page_content for doc, _ in results])
+        Context:
+        {context_text}
 
-    # ✅ **LLM Query Processing**
-    prompt = f"""
-    You are a business assistant and company chatbot. Your **only** source of truth is the provided context.
-
-    Context:
-    {context_text}
-
-    Answer the question based **strictly** on the context above.
-    - If the user greets (hi, hello, hey), respond with the same greeting warmly and follow up with “How can I assist you today?”; if the user says thank you, reply with “You're welcome! Is there anything else I can help you with?” to keep the conversation flowing.
+        Answer the question based **strictly** on the context above.
+    - If the user message is exactly "hi", "hello", or "hey", respond with the same greeting and follow up with: "How can I assist you today?"
+    - If the user says "thank you" or "thanks", reply with: "You're welcome! Is there anything else I can help you with?"
     - If you don't find an answer, **say Sorry and you don't have enough information** instead of guessing.
-    - If the user is asking for quotations, redirect them to the quotation form.
+    - If the user is asking for quotations, redirect them to the quotation form, but do not use place holders such as [quotation form]
     - Avoid generic definitions or answering beyond the provided data.
     - Provide answers in a direct and informative way and use bullet points if there is a list of items.
     - **Do not generate responses with placeholders such as [insert link], [company contact details], or [your name]. Instead, directly give the quotation form instead of any fake links or fake link placeholders.**
@@ -318,27 +288,48 @@ def query_rag(query_text: str):
     - **DO NOT make up company names or information. Only refer to Brihaspathi Technologies Limited.**
     - Provide a direct and professional response.
 
-    Question: {query_text}
-    Response:
-    """
+        Question: {query_text}
+        Response:
+        """
 
-    # Query Ollama Model
-    model = Ollama(model="llama3.2", temperature=0.2, top_k=40)
-    response_text = model.invoke(prompt).strip()
+        model = Ollama(model="llama3.2", temperature=0.2, top_k=40)
+        response_text = model.invoke(prompt).strip()
 
-    # ✅ **Remove Unwanted Phrases**
-    unwanted_phrases = [
-        "According to the provided context,", 
-        "According to context,", 
-        "Comptech",
-        "vasavi",
-        "Based on the given data,"
-    ]
+        # Clean LLM output
+        unwanted_phrases = [
+            "According to the provided context,", 
+            "According to context,", 
+            "Comptech",
+            "vasavi",
+            "Based on the given data,"
+        ]
 
-    for phrase in unwanted_phrases:
-        response_text = response_text.replace(phrase, "").strip()
+        for phrase in unwanted_phrases:
+            response_text = response_text.replace(phrase, "").strip()
 
-    return {"response": response_text, "show_form": False}
+        if "i don't have enough information" not in response_text.lower():
+            return {"response": response_text, "show_form": False}
+
+
+    
+    # ✅ 3️⃣ Final fallback:
+    return {"response": "Sorry, I don’t have enough information to answer that. Please contact us at 9676021111 or support@brihaspathi.com.", "show_form": False}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 @app.post("/save-chat-history")
 async def save_chat_history(chat_data: ChatHistory):
