@@ -120,7 +120,7 @@ def query_rag(query_text: str):
 
     query_groups = [
         {
-            "patterns": ["md", "who is md", "who is the md", "managing director"],
+            "patterns": ["md", "who is md", "who is the md", "managing director","director","Director"],
             "response": "<b>Mr. Rajasekhar Papolu</b> is the Managing Director of Brihaspathi Technologies Limited."
         },
         {
