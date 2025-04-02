@@ -12,6 +12,7 @@ from langchain_community.llms.ollama import Ollama
 from langchain_community.document_loaders import PyPDFDirectoryLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from sentence_transformers import SentenceTransformer
+from fastapi.responses import FileResponse
 
 # 🌐 Initialize FastAPI
 app = FastAPI()
@@ -244,12 +245,52 @@ def query_rag(query_text: str):
 
         <p>For official inquiries, please contact:</p>
         <p>📧 <a href='mailto:info@brihaspathi.com'>info@brihaspathi.com</a></p>
-    """}  # Add all predefined long-form HTML responses here.
+    """,
+    "Sales": """
+        <b>📊 Sales Divisions at Brihaspathi Technologies Limited</b>
+        <p>We operate with two specialized sales verticals to cater to diverse market segments: <b>Retail Sales</b> and <b>Institutional Sales</b>.</p>
+
+        <b>🛒 Retail Sales</b>
+        <p>Retail sales refer to the process of selling products or services directly to individual consumers for personal use. These sales typically occur through brick-and-mortar stores, e-commerce platforms, or direct sales representatives.</p>
+
+        <b>Key Characteristics:</b>
+        <ul>
+            <li>🎯 Directly target individual consumers</li>
+            <li>💸 Smaller transaction values but high frequency</li>
+            <li>🛍️ Includes in-store purchases, online shopping, and direct sales</li>
+            <li>⭐ Focus on branding, customer experience, and promotions</li>
+        </ul>
+
+        <b>📞 Contact – Retail Sales:</b>
+        <ul>
+            <li>🔹 <b>Mr. Madhu Kuppani</b> – +91 96762 12345</li>
+            <li>🔹 <b>Mr. Moses</b> – +91 82473 21053</li>
+        </ul>
+
+        <br>
+
+        <b>🏢 Institutional Sales</b>
+        <p>Institutional sales involve selling products or services in bulk to businesses, government bodies, or educational institutions. These sales require strategic planning and long-term relationship management.</p>
+
+        <b>Key Characteristics:</b>
+        <ul>
+            <li>🏛️ Target businesses, institutions, and organizations</li>
+            <li>💼 Larger transaction values and long-term commitments</li>
+            <li>📃 Involves customized pricing, contracts, and service agreements</li>
+            <li>🤝 Requires strong relationship management and strategic sales efforts</li>
+        </ul>
+
+        <b>📞 Contact – Institutional Sales:</b>
+        <ul>
+            <li>🔹 <b>Mr. Saketh Addepalli</b> – +91 96408 33333</li>
+        </ul>
+"""
+}  # Add all predefined long-form HTML responses here.
 
     if normalized_query in predefined_responses:
         return {"response": predefined_responses[normalized_query], "show_form": False}
 
-    quotation_phrases = ["i need a quotation", "can you give me a quote?", "how much does it cost?", "what is the price?", "can i get an estimate?", "quotation please","price","cctv", "solar", "home automation", "sales","quotation", "cost", "quote", "pricing", "estimate", "Quotation", "Quote"]
+    quotation_phrases = ["i need a quotation", "can you give me a quote?", "how much does it cost?", "what is the price?", "can i get an estimate?", "quotation please","price","cctv", "solar", "home automation","quotation", "cost", "quote", "pricing", "estimate", "Quotation", "Quote"]
     if any(phrase in normalized_query for phrase in quotation_phrases):
         return {"response": "Please fill in the form below to get a quotation or click on contact us above.", "show_form": True}
             
@@ -315,22 +356,6 @@ def query_rag(query_text: str):
     # ✅ 3️⃣ Final fallback:
     return {"response": "Sorry, I don’t have enough information to answer that. Please contact us at 9676021111 or support@brihaspathi.com.", "show_form": False}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 @app.post("/save-chat-history")
 async def save_chat_history(chat_data: ChatHistory):
     print("✅ Received chat history:", chat_data.dict()) 
@@ -378,6 +403,15 @@ async def chat(query: UserQuery):
 @app.post("/submit_form")
 async def submit_form(name: str = Form(...), email: str = Form(...), phone: str = Form(...), interest: str = Form(...)):
     return {"message": "✅ Your request has been submitted! We will get back to you soon."}
+
+
+@app.get("/download-brochure")
+async def download_brochure():
+    brochure_path = "/home/sahasra/Downloads/GenAI/rag-tutorial-v2/data_brihaspathi/updated_brochure_BTL_25-01-2025.pdf"
+    if os.path.exists(brochure_path):
+        return FileResponse(brochure_path, media_type='application/pdf', filename="updated_brochure_BTL_25-01-2025.pdf")
+    else:
+        raise HTTPException(status_code=404, detail="Brochure not found")
 
 if __name__ == "__main__":
     import uvicorn
