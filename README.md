@@ -13,8 +13,8 @@ Follow these steps to clone, set up, and run the application.
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/your-username/brihas-chat_bot.git
-cd brihas-chat_bot/backend
+git clone https://github.com/your-username/chat_bot.git
+cd chat_bot/backend
 ```
 
 ---
