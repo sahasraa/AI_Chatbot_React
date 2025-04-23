@@ -11,4 +11,5 @@ sentence_transformers
 python-multipart
 fastapi
 uvicorn
+ollama
 
