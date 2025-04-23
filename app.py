@@ -13,6 +13,7 @@ from langchain_community.document_loaders import PyPDFDirectoryLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from sentence_transformers import SentenceTransformer
 from fastapi.responses import FileResponse
+import logging
 
 # 🌐 Initialize FastAPI
 app = FastAPI()
