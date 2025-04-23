@@ -1,6 +1,6 @@
 # 🤖 Brihaspathi ChatBot – FastAPI + MongoDB
 
-This is a chatbot backend built using **FastAPI** and **MongoDB Atlas**. It supports saving and retrieving chat history, downloading brochures, form submissions, and querying a chatbot — all while running securely from your own server (e.g., AWS EC2) to minimize digital footprint and external data exposure.
+This is a chatbot backend built using **FastAPI** and **MongoDB Atlas**. It supports saving and retrieving chat history, downloading brochures, form submissions, and querying a chatbot — all while running securely from your own server (e.g., AWS EC2)
 
 ---
 
