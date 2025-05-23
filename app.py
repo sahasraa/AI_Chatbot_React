@@ -8,7 +8,8 @@ import pytz
 import os
 import difflib
 from langchain_chroma import Chroma
-from langchain_community.llms.ollama import Ollama
+# from langchain_community.llms.ollama import Ollama
+from langchain_ollama import OllamaLLM
 from langchain_community.document_loaders import PyPDFDirectoryLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from sentence_transformers import SentenceTransformer
@@ -17,6 +18,10 @@ import logging
 
 # 🌐 Initialize FastAPI
 app = FastAPI()
+
+@app.get("/")
+def read_root():
+    return {"message": "Welcome to the AI Chatbot API"}
 
 # 🔄 Enable CORS
 app.add_middleware(
@@ -334,7 +339,7 @@ def query_rag(query_text: str):
         Response:
         """
 
-        model = Ollama(model="llama3.2", temperature=0.2, top_k=40)
+        model = OllamaLLM(model="llama3.2", temperature=0.2, top_k=40)
         response_text = model.invoke(prompt).strip()
 
         # Clean LLM output
@@ -356,6 +361,10 @@ def query_rag(query_text: str):
     
     # ✅ 3️⃣ Final fallback:
     return {"response": "Sorry, I don’t have enough information to answer that. Please contact us at 9676021111 or support@brihaspathi.com.", "show_form": False}
+
+@app.get("/favicon.ico")
+async def favicon():
+    return FileResponse("path/to/favicon.ico")
 
 @app.post("/save-chat-history")
 async def save_chat_history(chat_data: ChatHistory):
@@ -408,7 +417,7 @@ async def submit_form(name: str = Form(...), email: str = Form(...), phone: str 
 
 @app.get("/download-brochure")
 async def download_brochure():
-    brochure_path = "/home/sahasra/Downloads/GenAI/rag-tutorial-v2/data_brihaspathi/updated_brochure_BTL_25-01-2025.pdf"
+    brochure_path = "data_brihaspathi/updated brochure BTL 25-01-2025.pdf"
     if os.path.exists(brochure_path):
         return FileResponse(brochure_path, media_type='application/pdf', filename="updated_brochure_BTL_25-01-2025.pdf")
     else:
